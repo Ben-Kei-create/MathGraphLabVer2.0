@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+extension Notification.Name {
+    static let graphTapped = Notification.Name("GraphTapped")
+}
+
 struct TouchInteractionView: View {
     
     @EnvironmentObject var appState: AppState
@@ -23,6 +27,7 @@ struct TouchInteractionView: View {
                 
                 // 1. タップ（作図用）
                 .onTapGesture { location in
+                    NotificationCenter.default.post(name: .graphTapped, object: nil)
                     handleTap(at: location, size: geometry.size)
                 }
                 

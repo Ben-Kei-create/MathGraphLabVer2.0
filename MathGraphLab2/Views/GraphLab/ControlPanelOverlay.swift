@@ -224,6 +224,45 @@ struct ControlPanelOverlay: View {
                             // 4. 直線 ℓ(x) = mx + n
                             HStack(alignment: .center, spacing: 6) {
                                 CompactSectionHeader(symbol: "ℓ(x)", color: .red)
+                                if isLineSectionExpanded {
+                                    // 2点を通る直線（アイコンのみ）
+                                    if appState.markedPoints.count >= 2 {
+                                        Button(action: applyLineFromLastTwoPoints) {
+                                            Image(systemName: "wand.and.stars")
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundColor(.white)
+                                                .frame(width: 28, height: 28)
+                                                .background(Circle().fill(Color.blue))
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+
+                                    // 接線スナップ
+                                    Button(action: applyTangentSnap) {
+                                        Image(systemName: "line.diagonal")
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundColor(.orange)
+                                            .frame(width: 28, height: 28)
+                                            .background(Circle().fill(Color.orange.opacity(0.15)))
+                                    }
+                                    .buttonStyle(.plain)
+                                    .disabled(appState.parabola.a == 0 || !appState.showParabolaGraph)
+                                    .opacity(appState.parabola.a == 0 || !appState.showParabolaGraph ? 0.35 : 1.0)
+
+                                    // 面積モード
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            appState.isAreaModeEnabled.toggle()
+                                        }
+                                    } label: {
+                                        Image(systemName: appState.isAreaModeEnabled ? "triangle.fill" : "triangle")
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .foregroundColor(appState.isAreaModeEnabled ? .green : .green.opacity(0.5))
+                                            .frame(width: 28, height: 28)
+                                            .background(Circle().fill(appState.isAreaModeEnabled ? Color.green.opacity(0.18) : Color.green.opacity(0.08)))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                                 Spacer(minLength: 4)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -249,44 +288,6 @@ struct ControlPanelOverlay: View {
                                 .buttonStyle(.plain)
                             }
                             if isLineSectionExpanded {
-                                HStack(alignment: .center, spacing: 6) {
-                                    Spacer(minLength: 0)
-                                    // 2点を通る直線（アイコンのみ）
-                                    if appState.markedPoints.count >= 2 {
-                                        Button(action: applyLineFromLastTwoPoints) {
-                                            Image(systemName: "wand.and.stars")
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(.white)
-                                                .frame(width: 28, height: 28)
-                                                .background(Circle().fill(Color.blue))
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                    // 接線スナップ
-                                    Button(action: applyTangentSnap) {
-                                        Image(systemName: "line.diagonal")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.orange)
-                                            .frame(width: 28, height: 28)
-                                            .background(Circle().fill(Color.orange.opacity(0.15)))
-                                    }
-                                    .buttonStyle(.plain)
-                                    .disabled(appState.parabola.a == 0 || !appState.showParabolaGraph)
-                                    .opacity(appState.parabola.a == 0 || !appState.showParabolaGraph ? 0.35 : 1.0)
-                                    // 面積モード
-                                    Button {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            appState.isAreaModeEnabled.toggle()
-                                        }
-                                    } label: {
-                                        Image(systemName: appState.isAreaModeEnabled ? "triangle.fill" : "triangle")
-                                            .font(.system(size: 11, weight: .semibold))
-                                            .foregroundColor(appState.isAreaModeEnabled ? .green : .green.opacity(0.5))
-                                            .frame(width: 28, height: 28)
-                                            .background(Circle().fill(appState.isAreaModeEnabled ? Color.green.opacity(0.18) : Color.green.opacity(0.08)))
-                                    }
-                                    .buttonStyle(.plain)
-                                }
                                 VStack(alignment: .leading, spacing: 6) {
                                     ParameterSliderWithIcon(
                                         icon: "skew",
@@ -344,6 +345,12 @@ struct ControlPanelOverlay: View {
         .onChange(of: appState.isLocusModeActive) { _, isActive in
             if !isActive {
                 isLocusSectionExpanded = false
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .graphTapped)) { _ in
+            guard isExpanded else { return }
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isExpanded = false
             }
         }
         .task(id: slidingEndTime) {
