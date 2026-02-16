@@ -71,13 +71,13 @@ struct IconSegmentedControl<T: Hashable>: View {
             ],
             selection: .constant("light")
         )
-        .frame(width: 200)
+        .frame(width:   180)
         
         // Input mode selector
         IconSegmentedControl(
             options: [
-                .init(value: "decimal", icon: "0.circle.fill", label: "0.5"),
-                .init(value: "fraction", icon: "1.circle.fill", label: "1/2")
+                .init(value: "decimal", icon: "0.circle.fill", label: "0.4"),
+                .init(value: "fraction", icon: "1.circle.fill", label: "0.4")
             ],
             selection: .constant("decimal")
         )

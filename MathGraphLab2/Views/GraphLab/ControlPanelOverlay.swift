@@ -39,6 +39,24 @@ struct ControlPanelOverlay: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
                                     CompactSectionHeader(symbol: "P(t)", color: .pink)
+                                    if isMotionSectionExpanded {
+                                        Button(action: toggleMotionPlayback) {
+                                            HStack(spacing: 4) {
+                                                Image(systemName: isMotionPlaying ? "stop.fill" : "play.fill")
+                                                    .font(.system(size: 10, weight: .bold))
+                                                Text(isMotionPlaying ? "停止" : "再生")
+                                                    .font(.system(size: 11, weight: .semibold))
+                                            }
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                            .background(
+                                                Capsule()
+                                                    .fill(isMotionPlaying ? Color.pink.opacity(0.75) : Color.pink)
+                                            )
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                     Spacer(minLength: 4)
                                     Button {
                                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -77,23 +95,6 @@ struct ControlPanelOverlay: View {
                                             .foregroundColor(.secondary)
                                             .frame(width: 56, alignment: .trailing)
                                     }
-
-                                    Button(action: toggleMotionPlayback) {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: isMotionPlaying ? "stop.fill" : "play.fill")
-                                                .font(.system(size: 11, weight: .bold))
-                                            Text(isMotionPlaying ? "停止" : "再生")
-                                                .font(.system(size: 12, weight: .semibold))
-                                        }
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(
-                                            Capsule()
-                                                .fill(isMotionPlaying ? Color.pink.opacity(0.75) : Color.pink)
-                                        )
-                                    }
-                                    .buttonStyle(.plain)
                                 }
                             }
 
@@ -104,6 +105,16 @@ struct ControlPanelOverlay: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
                                     CompactSectionHeader(symbol: "LOCUS", color: .green)
+                                    if isLocusSectionExpanded {
+                                        let t = appState.movingPointT
+                                        let py = appState.parabola.evaluate(at: t)
+                                        let mx = (t + Double(appState.locusPointA.x)) / 2.0
+                                        let my = (py + Double(appState.locusPointA.y)) / 2.0
+                                        Text(String(format: "M(%.2f, %.2f)", mx, my))
+                                            .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                                            .foregroundColor(.green)
+                                            .lineLimit(1)
+                                    }
                                     Spacer(minLength: 4)
                                     Button {
                                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -148,14 +159,6 @@ struct ControlPanelOverlay: View {
                                             compact: true
                                         )
                                     }
-
-                                    let t = appState.movingPointT
-                                    let py = appState.parabola.evaluate(at: t)
-                                    let mx = (t + Double(appState.locusPointA.x)) / 2.0
-                                    let my = (py + Double(appState.locusPointA.y)) / 2.0
-                                    Text(String(format: "M(%.2f, %.2f)", mx, my))
-                                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                        .foregroundColor(.green)
                                 }
                             }
 

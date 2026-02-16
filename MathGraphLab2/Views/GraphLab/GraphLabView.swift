@@ -51,8 +51,8 @@ struct GraphLabView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("MathGraph Lab")
-                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    Text("MathGraph")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
                 }
                 
                 // シェアボタン + テーマ
