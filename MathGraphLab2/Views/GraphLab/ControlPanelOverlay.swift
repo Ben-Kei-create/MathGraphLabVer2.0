@@ -42,24 +42,23 @@ struct ControlPanelOverlay: View {
                                         CompactSectionHeader(symbol: "P(t)", color: .pink)
                                     }
                                     .buttonStyle(.plain)
-                                    if isMotionSectionExpanded {
-                                        Button(action: toggleMotionPlayback) {
-                                            HStack(spacing: 4) {
-                                                Image(systemName: isMotionPlaying ? "stop.fill" : "play.fill")
-                                                    .font(.system(size: 10, weight: .bold))
-                                                Text(isMotionPlaying ? "停止" : "再生")
-                                                    .font(.system(size: 11, weight: .semibold))
-                                            }
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 5)
-                                            .background(
-                                                Capsule()
-                                                    .fill(isMotionPlaying ? Color.pink.opacity(0.75) : Color.pink)
-                                            )
+                                    Button(action: toggleMotionPlayback) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: isMotionPlaying ? "stop.fill" : "play.fill")
+                                                .font(.system(size: 10, weight: .bold))
+                                            Text(isMotionPlaying ? "停止" : "再生")
+                                                .font(.system(size: 11, weight: .semibold))
                                         }
-                                        .buttonStyle(.plain)
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 5)
+                                        .background(
+                                            Capsule()
+                                                .fill(isMotionPlaying ? Color.pink.opacity(0.75) : Color.pink)
+                                                .opacity(0.8)
+                                        )
                                     }
+                                    .buttonStyle(.plain)
                                     Spacer(minLength: 4)
                                 }
 
@@ -90,10 +89,10 @@ struct ControlPanelOverlay: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
                                     Button(action: toggleLocusSection) {
-                                        CompactSectionHeader(symbol: "LOCUS", color: .green)
+                                        CompactSectionHeader(symbol: "M(t)", color: .green)
                                     }
                                     .buttonStyle(.plain)
-                                    if isLocusSectionExpanded {
+                                    if appState.isLocusModeActive || isLocusSectionExpanded {
                                         let t = appState.movingPointT
                                         let py = appState.parabola.evaluate(at: t)
                                         let mx = (t + Double(appState.locusPointA.x)) / 2.0
@@ -104,6 +103,16 @@ struct ControlPanelOverlay: View {
                                             .lineLimit(1)
                                     }
                                     Spacer(minLength: 4)
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            appState.isLocusModeActive.toggle()
+                                        }
+                                    } label: {
+                                        Image(systemName: appState.isLocusModeActive ? "eye.fill" : "eye.slash.fill")
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundColor(appState.isLocusModeActive ? .green : .secondary.opacity(0.5))
+                                    }
+                                    .buttonStyle(.plain)
                                 }
 
                                 if isLocusSectionExpanded {
@@ -145,6 +154,36 @@ struct ControlPanelOverlay: View {
                                     CompactSectionHeader(symbol: "ƒ(x)", color: .blue)
                                 }
                                 .buttonStyle(.plain)
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        appState.isAreaFromOrigin.toggle()
+                                    }
+                                } label: {
+                                    Image(systemName: "o.circle")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(appState.isAreaFromOrigin ? .green : .blue)
+                                        .frame(width: 28, height: 28)
+                                        .background(
+                                            Circle().fill(
+                                                appState.isAreaFromOrigin
+                                                ? Color.green.opacity(0.18)
+                                                : Color.blue.opacity(0.12)
+                                            )
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                                .disabled(!appState.isAreaModeEnabled)
+                                .opacity(appState.isAreaModeEnabled ? 1.0 : 0.35)
+                                if appState.markedPoints.count >= 2 {
+                                    Button(action: applyLineFromLastTwoPoints) {
+                                        Image(systemName: "wand.and.stars")
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundColor(.white)
+                                            .frame(width: 28, height: 28)
+                                            .background(Circle().fill(Color.blue))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                                 Spacer(minLength: 4)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -196,45 +235,31 @@ struct ControlPanelOverlay: View {
                                     CompactSectionHeader(symbol: "ℓ(x)", color: .red)
                                 }
                                 .buttonStyle(.plain)
-                                if isLineSectionExpanded {
-                                    // 2点を通る直線（アイコンのみ）
-                                    if appState.markedPoints.count >= 2 {
-                                        Button(action: applyLineFromLastTwoPoints) {
-                                            Image(systemName: "wand.and.stars")
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(.white)
-                                                .frame(width: 28, height: 28)
-                                                .background(Circle().fill(Color.blue))
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-
-                                    // 接線スナップ
-                                    Button(action: applyTangentSnap) {
-                                        Image(systemName: "line.diagonal")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.orange)
-                                            .frame(width: 28, height: 28)
-                                            .background(Circle().fill(Color.orange.opacity(0.15)))
-                                    }
-                                    .buttonStyle(.plain)
-                                    .disabled(appState.parabola.a == 0 || !appState.showParabolaGraph)
-                                    .opacity(appState.parabola.a == 0 || !appState.showParabolaGraph ? 0.35 : 1.0)
-
-                                    // 面積モード
-                                    Button {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            appState.isAreaModeEnabled.toggle()
-                                        }
-                                    } label: {
-                                        Image(systemName: appState.isAreaModeEnabled ? "triangle.fill" : "triangle")
-                                            .font(.system(size: 11, weight: .semibold))
-                                            .foregroundColor(appState.isAreaModeEnabled ? .green : .green.opacity(0.5))
-                                            .frame(width: 28, height: 28)
-                                            .background(Circle().fill(appState.isAreaModeEnabled ? Color.green.opacity(0.18) : Color.green.opacity(0.08)))
-                                    }
-                                    .buttonStyle(.plain)
+                                // 接線スナップ
+                                Button(action: applyTangentSnap) {
+                                    Image(systemName: "line.diagonal")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(.orange)
+                                        .frame(width: 28, height: 28)
+                                        .background(Circle().fill(Color.orange.opacity(0.15)))
                                 }
+                                .buttonStyle(.plain)
+                                .disabled(appState.parabola.a == 0 || !appState.showParabolaGraph)
+                                .opacity(appState.parabola.a == 0 || !appState.showParabolaGraph ? 0.35 : 1.0)
+
+                                // 面積モード
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        appState.isAreaModeEnabled.toggle()
+                                    }
+                                } label: {
+                                    Image(systemName: appState.isAreaModeEnabled ? "triangle.fill" : "triangle")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(appState.isAreaModeEnabled ? .green : .green.opacity(0.5))
+                                        .frame(width: 28, height: 28)
+                                        .background(Circle().fill(appState.isAreaModeEnabled ? Color.green.opacity(0.18) : Color.green.opacity(0.08)))
+                                }
+                                .buttonStyle(.plain)
                                 Spacer(minLength: 4)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {

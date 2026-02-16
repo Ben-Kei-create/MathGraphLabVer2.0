@@ -51,6 +51,7 @@ final class AppState: ObservableObject {
     
     // UI State
     @Published var isAreaModeEnabled: Bool = false
+    @Published var isAreaFromOrigin: Bool = false
     @Published var isGeometryModeEnabled: Bool = false
     @Published var geometryElements: [GeometryElement] = []
     @Published var markedPoints: [MarkedPoint] = []
@@ -180,6 +181,7 @@ final class AppState: ObservableObject {
         parabola = Parabola()
         line = Line()
         isAreaModeEnabled = false
+        isAreaFromOrigin = false
         isGeometryModeEnabled = false
         movingPointT = 0.0
         isMotionModeActive = false

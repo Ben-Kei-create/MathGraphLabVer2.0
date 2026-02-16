@@ -203,24 +203,16 @@ struct AnalysisOverlayView: View {
     ) {
         guard intersections.count == 2 else { return }
 
-        let vertex = coordSystem.screenPosition(
-            mathX: appState.parabola.p,
-            mathY: appState.parabola.q
-        )
-        let pointA = coordSystem.screenPosition(
-            mathX: intersections[0].x,
-            mathY: intersections[0].y
-        )
-        let pointB = coordSystem.screenPosition(
-            mathX: intersections[1].x,
-            mathY: intersections[1].y
-        )
+        let triangle = areaTriangleVertices(intersections: intersections)
+        let p1 = coordSystem.screenPosition(mathX: triangle.p1.x, mathY: triangle.p1.y)
+        let p2 = coordSystem.screenPosition(mathX: triangle.p2.x, mathY: triangle.p2.y)
+        let p3 = coordSystem.screenPosition(mathX: triangle.p3.x, mathY: triangle.p3.y)
 
         // 塗りつぶし
         var fillPath = Path()
-        fillPath.move(to: vertex)
-        fillPath.addLine(to: pointA)
-        fillPath.addLine(to: pointB)
+        fillPath.move(to: p1)
+        fillPath.addLine(to: p2)
+        fillPath.addLine(to: p3)
         fillPath.closeSubpath()
 
         context.fill(
@@ -244,16 +236,12 @@ struct AnalysisOverlayView: View {
     ) {
         guard intersections.count == 2 else { return }
 
-        // 頂点 V(p, q) と交点 A, B から面積を計算
-        let vx = appState.parabola.p
-        let vy = appState.parabola.q
-        let ax = intersections[0].x
-        let ay = intersections[0].y
-        let bx = intersections[1].x
-        let by = intersections[1].y
-
-        // S = ½ |xA(yB - yV) + xB(yV - yA) + xV(yA - yB)|
-        let area = 0.5 * abs(ax * (by - vy) + bx * (vy - ay) + vx * (ay - by))
+        let triangle = areaTriangleVertices(intersections: intersections)
+        let area = triangleArea(
+            triangle.p1,
+            triangle.p2,
+            triangle.p3
+        )
 
         let mode = appState.coefficientInputMode
         let areaString = mode == .decimal
@@ -262,8 +250,8 @@ struct AnalysisOverlayView: View {
         let areaLabel = "S = \(areaString)"
 
         // ラベルを三角形の重心に配置
-        let centroidX = (vx + ax + bx) / 3.0
-        let centroidY = (vy + ay + by) / 3.0
+        let centroidX = (triangle.p1.x + triangle.p2.x + triangle.p3.x) / 3.0
+        let centroidY = (triangle.p1.y + triangle.p2.y + triangle.p3.y) / 3.0
         let labelPos = coordSystem.screenPosition(mathX: centroidX, mathY: centroidY)
 
         let areaText = Text(areaLabel)
@@ -314,6 +302,29 @@ struct AnalysisOverlayView: View {
 
     private static func gcd(_ a: Int, _ b: Int) -> Int {
         b == 0 ? abs(a) : gcd(b, a % b)
+    }
+
+    private func areaTriangleVertices(
+        intersections: [IntersectionPoint]
+    ) -> (p1: (x: Double, y: Double), p2: (x: Double, y: Double), p3: (x: Double, y: Double)) {
+        let p1: (x: Double, y: Double) = appState.isAreaFromOrigin
+            ? (0.0, 0.0)
+            : (appState.parabola.p, appState.parabola.q)
+        let p2 = (intersections[0].x, intersections[0].y)
+        let p3 = (intersections[1].x, intersections[1].y)
+        return (p1, p2, p3)
+    }
+
+    private func triangleArea(
+        _ a: (x: Double, y: Double),
+        _ b: (x: Double, y: Double),
+        _ c: (x: Double, y: Double)
+    ) -> Double {
+        0.5 * abs(
+            a.x * (b.y - c.y) +
+            b.x * (c.y - a.y) +
+            c.x * (a.y - b.y)
+        )
     }
 }
 
