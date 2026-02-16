@@ -55,9 +55,10 @@ struct GraphLabView: View {
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
                 }
                 
-                // シェアボタン
-                ToolbarItem(placement: .navigationBarLeading) {
+                // シェアボタン + テーマ
+                ToolbarItemGroup(placement: .navigationBarLeading) {
                     ShareButton()
+                    ThemeMenuButton()
                 }
                 
                 // 右側ツールバー: ミッション + 設定
@@ -158,6 +159,40 @@ struct MovingPointOverlayView: View {
             }
         }
         .allowsHitTesting(false)
+    }
+}
+
+struct ThemeMenuButton: View {
+    @EnvironmentObject var appState: AppState
+
+    var body: some View {
+        Menu {
+            Button {
+                appState.appTheme = .light
+            } label: {
+                Label("ライト", systemImage: "sun.max.fill")
+            }
+            Button {
+                appState.appTheme = .dark
+            } label: {
+                Label("ダーク", systemImage: "moon.fill")
+            }
+            Button {
+                appState.appTheme = .blackboard
+            } label: {
+                Label("黒板", systemImage: "graduationcap.fill")
+            }
+        } label: {
+            Image(systemName: themeIcon)
+        }
+    }
+
+    private var themeIcon: String {
+        switch appState.appTheme {
+        case .light: return "sun.max.fill"
+        case .dark: return "moon.fill"
+        case .blackboard: return "graduationcap.fill"
+        }
     }
 }
 

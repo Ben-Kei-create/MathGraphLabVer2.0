@@ -35,27 +35,7 @@ struct ControlPanelOverlay: View {
                 VStack(alignment: .trailing, spacing: 10) {
                     if isExpanded {
                         VStack(alignment: .leading, spacing: 12) {
-                            // 1. テーマ（コンパクト）
-                            HStack(spacing: 6) {
-                                Image(systemName: "paintbrush.fill")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.secondary)
-                                IconSegmentedControl(
-                                    options: [
-                                        .init(value: AppState.AppTheme.light, icon: "sun.max.fill", label: nil),
-                                        .init(value: AppState.AppTheme.dark, icon: "moon.fill", label: nil),
-                                        .init(value: AppState.AppTheme.blackboard, icon: "chalkboard.fill", label: nil)
-                                    ],
-                                    selection: $appState.appTheme
-                                )
-                                .scaleEffect(0.85)
-                                .frame(width: 120)
-                            }
-
-                            Divider()
-                                .padding(.vertical, 2)
-
-                            // 2. 動点Pモード
+                            // 1. 動点Pモード
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
                                     CompactSectionHeader(symbol: "P(t)", color: .pink)
@@ -81,9 +61,6 @@ struct ControlPanelOverlay: View {
                                 }
 
                                 if isMotionSectionExpanded {
-                                    Text("動点Pモード")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.secondary)
 
                                     HStack(spacing: 8) {
                                         Slider(
