@@ -97,8 +97,8 @@ struct TouchInteractionView: View {
                 HapticManager.shared.impact(style: .medium)
             }
         } else {
-            // 追加実行（上限10個）
-            if appState.markedPoints.count < 10 {
+            // 追加実行（上限4個）
+            if appState.markedPoints.count < AppState.maxMarkedPoints {
                 var x = mathPos.x
                 var y = mathPos.y
                 
@@ -113,7 +113,7 @@ struct TouchInteractionView: View {
                     HapticManager.shared.impact(style: .light)
                 }
             } else {
-                print("⚠️ 点は最大10個までです")
+                print("⚠️ 点は最大4個までです")
                 if appState.isHapticsEnabled {
                     HapticManager.shared.notification(type: .error)
                 }

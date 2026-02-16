@@ -15,11 +15,6 @@ struct OptionMenuView: View {
         Menu {
             // MARK: - 1. 表示・分析 (Display & Analysis)
             Section {
-                Toggle(isOn: $appState.isAreaModeEnabled) {
-                    Label("面積を表示", systemImage: "triangle.fill")
-                }
-                .help("放物線と直線で囲まれた三角形の面積を可視化します")
-
                 Toggle(isOn: $appState.isGeometryModeEnabled) {
                     Label("作図モード", systemImage: "pencil.and.outline")
                 }
@@ -70,7 +65,7 @@ struct OptionMenuView: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle.fill")
-                .font(.system(size: 28))
+                .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(Color(UIColor.label))
                 .padding(8)
                 .background(.ultraThinMaterial)

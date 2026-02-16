@@ -8,6 +8,7 @@ import Combine
 
 // MARK: - App State
 final class AppState: ObservableObject {
+    static let maxMarkedPoints: Int = 4
     
     // MARK: - Enums (クラス内で定義して管理を楽にする)
     
@@ -129,8 +130,8 @@ final class AppState: ObservableObject {
     }
     
     func addMarkedPoint(x: Double, y: Double) {
-        guard markedPoints.count < 10 else { return }
-        let labels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+        guard markedPoints.count < Self.maxMarkedPoints else { return }
+        let labels = ["A", "B", "C", "D"]
         markedPoints.append(MarkedPoint(label: labels[markedPoints.count], x: x, y: y))
     }
     
@@ -141,7 +142,7 @@ final class AppState: ObservableObject {
     }
     
     private func relabelPoints() {
-        let labels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+        let labels = ["A", "B", "C", "D"]
         for i in 0..<markedPoints.count {
             markedPoints[i].label = labels[i]
         }

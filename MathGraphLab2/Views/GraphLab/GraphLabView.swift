@@ -51,35 +51,20 @@ struct GraphLabView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("MathGraph")
-                        .font(.system(size: 17, weight: .semibold, design: .rounded))
-                }
-                
-                // シェアボタン + テーマ
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    ShareButton()
-                    ThemeMenuButton()
-                }
-                
-                // 右側ツールバー: ミッション + 設定
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // ミッションボタン
-                    Button {
-                        withAnimation {
-                            if missionManager.isMissionActive {
-                                missionManager.stop()
-                            } else {
-                                missionManager.start()
+                    HStack(spacing: 18) {
+                        ShareButton()
+                        ThemeMenuButton()
+                        QuizToggleButton(isActive: missionManager.isMissionActive) {
+                            withAnimation {
+                                if missionManager.isMissionActive {
+                                    missionManager.stop()
+                                } else {
+                                    missionManager.start()
+                                }
                             }
                         }
-                    } label: {
-                        Image(systemName: "questionmark.circle")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(missionManager.isMissionActive ? .orange : .primary)
+                        OptionMenuView()
                     }
-                    
-                    // 設定メニュー
-                    OptionMenuView()
                 }
             }
         }
@@ -183,7 +168,7 @@ struct ThemeMenuButton: View {
                 Label("黒板", systemImage: "graduationcap.fill")
             }
         } label: {
-            Image(systemName: themeIcon)
+            ToolbarCircleIcon(systemName: themeIcon, tint: .primary)
         }
     }
 
@@ -200,7 +185,7 @@ struct ThemeMenuButton: View {
 struct ShareButton: View {
     var body: some View {
         Button(action: shareAction) {
-            Image(systemName: "square.and.arrow.up")
+            ToolbarCircleIcon(systemName: "square.and.arrow.up", tint: .primary)
         }
     }
     
@@ -227,6 +212,32 @@ struct ShareButton: View {
             }
             rootVC.present(activityVC, animated: true, completion: nil)
         }
+    }
+}
+
+struct QuizToggleButton: View {
+    let isActive: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ToolbarCircleIcon(systemName: "questionmark.circle", tint: isActive ? .orange : .primary)
+        }
+    }
+}
+
+struct ToolbarCircleIcon: View {
+    let systemName: String
+    let tint: Color
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: 20, weight: .semibold))
+            .foregroundColor(tint)
+            .padding(8)
+            .background(.ultraThinMaterial)
+            .clipShape(Circle())
+            .shadow(radius: 4)
     }
 }
 //
