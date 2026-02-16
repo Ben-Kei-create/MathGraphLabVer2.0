@@ -38,7 +38,10 @@ struct ControlPanelOverlay: View {
                             // 1. 動点Pモード
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
-                                    CompactSectionHeader(symbol: "P(t)", color: .pink)
+                                    Button(action: toggleMotionSection) {
+                                        CompactSectionHeader(symbol: "P(t)", color: .pink)
+                                    }
+                                    .buttonStyle(.plain)
                                     if isMotionSectionExpanded {
                                         Button(action: toggleMotionPlayback) {
                                             HStack(spacing: 4) {
@@ -58,24 +61,6 @@ struct ControlPanelOverlay: View {
                                         .buttonStyle(.plain)
                                     }
                                     Spacer(minLength: 4)
-                                    Button {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            if isMotionSectionExpanded {
-                                                isMotionSectionExpanded = false
-                                                appState.isMotionModeActive = false
-                                            } else {
-                                                isMotionSectionExpanded = true
-                                                appState.isMotionModeActive = true
-                                            }
-                                        }
-                                    } label: {
-                                        Image(systemName: isMotionSectionExpanded ? "chevron.down.circle.fill" : "play.circle.fill")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.pink)
-                                            .frame(width: 28, height: 28)
-                                            .background(Circle().fill(Color.pink.opacity(0.15)))
-                                    }
-                                    .buttonStyle(.plain)
                                 }
 
                                 if isMotionSectionExpanded {
@@ -104,7 +89,10 @@ struct ControlPanelOverlay: View {
                             // 2. LOCUS（軌跡）
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 6) {
-                                    CompactSectionHeader(symbol: "LOCUS", color: .green)
+                                    Button(action: toggleLocusSection) {
+                                        CompactSectionHeader(symbol: "LOCUS", color: .green)
+                                    }
+                                    .buttonStyle(.plain)
                                     if isLocusSectionExpanded {
                                         let t = appState.movingPointT
                                         let py = appState.parabola.evaluate(at: t)
@@ -116,24 +104,6 @@ struct ControlPanelOverlay: View {
                                             .lineLimit(1)
                                     }
                                     Spacer(minLength: 4)
-                                    Button {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            if isLocusSectionExpanded {
-                                                isLocusSectionExpanded = false
-                                                appState.isLocusModeActive = false
-                                            } else {
-                                                isLocusSectionExpanded = true
-                                                appState.isLocusModeActive = true
-                                            }
-                                        }
-                                    } label: {
-                                        Image(systemName: isLocusSectionExpanded ? "chevron.down.circle.fill" : "play.circle.fill")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.green)
-                                            .frame(width: 28, height: 28)
-                                            .background(Circle().fill(Color.green.opacity(0.15)))
-                                    }
-                                    .buttonStyle(.plain)
                                 }
 
                                 if isLocusSectionExpanded {
@@ -167,20 +137,15 @@ struct ControlPanelOverlay: View {
 
                             // 3. 放物線 f(x) = ax² + ...
                             HStack(spacing: 6) {
-                                CompactSectionHeader(symbol: "ƒ(x)", color: .blue)
-                                Spacer(minLength: 4)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         isParabolaSectionExpanded.toggle()
                                     }
                                 } label: {
-                                    Image(systemName: isParabolaSectionExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.blue)
-                                        .frame(width: 28, height: 28)
-                                        .background(Circle().fill(Color.blue.opacity(0.15)))
+                                    CompactSectionHeader(symbol: "ƒ(x)", color: .blue)
                                 }
                                 .buttonStyle(.plain)
+                                Spacer(minLength: 4)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         appState.showParabolaGraph.toggle()
@@ -223,7 +188,14 @@ struct ControlPanelOverlay: View {
 
                             // 4. 直線 ℓ(x) = mx + n
                             HStack(alignment: .center, spacing: 6) {
-                                CompactSectionHeader(symbol: "ℓ(x)", color: .red)
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        isLineSectionExpanded.toggle()
+                                    }
+                                } label: {
+                                    CompactSectionHeader(symbol: "ℓ(x)", color: .red)
+                                }
+                                .buttonStyle(.plain)
                                 if isLineSectionExpanded {
                                     // 2点を通る直線（アイコンのみ）
                                     if appState.markedPoints.count >= 2 {
@@ -264,18 +236,6 @@ struct ControlPanelOverlay: View {
                                     .buttonStyle(.plain)
                                 }
                                 Spacer(minLength: 4)
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        isLineSectionExpanded.toggle()
-                                    }
-                                } label: {
-                                    Image(systemName: isLineSectionExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.red)
-                                        .frame(width: 28, height: 28)
-                                        .background(Circle().fill(Color.red.opacity(0.15)))
-                                }
-                                .buttonStyle(.plain)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         appState.showLinearGraph.toggle()
@@ -368,6 +328,30 @@ struct ControlPanelOverlay: View {
     /// パラメータが触られたので「操作中」にし、0.45秒後に元に戻す
     private func markSliding() {
         slidingEndTime = Date().addingTimeInterval(0.45)
+    }
+
+    private func toggleMotionSection() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if isMotionSectionExpanded {
+                isMotionSectionExpanded = false
+                appState.isMotionModeActive = false
+            } else {
+                isMotionSectionExpanded = true
+                appState.isMotionModeActive = true
+            }
+        }
+    }
+
+    private func toggleLocusSection() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if isLocusSectionExpanded {
+                isLocusSectionExpanded = false
+                appState.isLocusModeActive = false
+            } else {
+                isLocusSectionExpanded = true
+                appState.isLocusModeActive = true
+            }
+        }
     }
 
     private func toggleMotionPlayback() {
