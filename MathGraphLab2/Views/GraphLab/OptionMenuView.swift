@@ -13,24 +13,7 @@ struct OptionMenuView: View {
 
     var body: some View {
         Menu {
-            // MARK: - 1. 表示・分析 (Display & Analysis)
-            Section {
-                Toggle(isOn: $appState.isGeometryModeEnabled) {
-                    Label("作図モード", systemImage: "pencil.and.outline")
-                }
-                .help("グラフ上をタップして自由な点を打てるようにします")
-
-                if appState.isGeometryModeEnabled {
-                    Toggle(isOn: $appState.showDistances) {
-                        Label("距離を表示", systemImage: "ruler")
-                    }
-                    .help("打った点どうしの距離を線で表示します")
-                }
-            } header: {
-                Text("表示・分析")
-            }
-
-            // MARK: - 2. 操作・ツール (Tools)
+            // MARK: - 操作・ツール (Tools)
             Section {
                 Toggle(isOn: $appState.isGridSnapEnabled) {
                     Label("グリッドにスナップ", systemImage: "grid")
@@ -43,7 +26,7 @@ struct OptionMenuView: View {
                 Text("操作・ツール")
             }
 
-            // MARK: - 3. システム (System)
+            // MARK: - システム (System)
             Section {
                 Link(destination: URL(string: "https://your-site.com/privacy")!) {
                     Label("プライバシーポリシー", systemImage: "doc.text")

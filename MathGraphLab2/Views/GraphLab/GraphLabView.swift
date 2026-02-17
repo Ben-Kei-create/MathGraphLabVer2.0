@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PencilKit
 
 struct GraphLabView: View {
     
@@ -33,6 +34,14 @@ struct GraphLabView: View {
                     
                     // 指移動（パン/ズーム）を有効にするためここに配置
                     TouchInteractionView()
+
+                    DrawingCanvasView(
+                        canvasView: Binding(
+                            get: { appState.canvasView },
+                            set: { appState.canvasView = $0 }
+                        ),
+                        isDrawingMode: $appState.isDrawingMode
+                    )
                     
                     VStack {
                         Spacer()
@@ -60,6 +69,14 @@ struct GraphLabView: View {
                                     missionManager.stop()
                                 } else {
                                     missionManager.start()
+                                }
+                            }
+                        }
+                        DrawingToggleButton(isActive: appState.isDrawingMode) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                appState.isDrawingMode.toggle()
+                                if appState.isDrawingMode {
+                                    appState.isGeometryModeEnabled = false
                                 }
                             }
                         }
@@ -222,6 +239,48 @@ struct QuizToggleButton: View {
     var body: some View {
         Button(action: action) {
             ToolbarCircleIcon(systemName: "questionmark.circle", tint: isActive ? .orange : .primary)
+        }
+    }
+}
+
+struct DrawingToggleButton: View {
+    let isActive: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ToolbarCircleIcon(
+                systemName: isActive ? "pencil.tip.crop.circle.badge.minus" : "pencil.tip.crop.circle.badge.plus",
+                tint: isActive ? .green : .primary
+            )
+        }
+    }
+}
+
+struct DrawingCanvasView: UIViewRepresentable {
+    @Binding var canvasView: PKCanvasView
+    @Binding var isDrawingMode: Bool
+
+    private let toolPicker = PKToolPicker()
+
+    func makeUIView(context: Context) -> PKCanvasView {
+        canvasView.backgroundColor = .clear
+        canvasView.isOpaque = false
+        canvasView.drawingPolicy = .anyInput
+        return canvasView
+    }
+
+    func updateUIView(_ uiView: PKCanvasView, context: Context) {
+        uiView.isUserInteractionEnabled = isDrawingMode
+
+        if isDrawingMode {
+            toolPicker.setVisible(true, forFirstResponder: uiView)
+            toolPicker.addObserver(uiView)
+            uiView.becomeFirstResponder()
+        } else {
+            toolPicker.setVisible(false, forFirstResponder: uiView)
+            toolPicker.removeObserver(uiView)
+            uiView.resignFirstResponder()
         }
     }
 }

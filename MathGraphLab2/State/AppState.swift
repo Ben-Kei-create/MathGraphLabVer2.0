@@ -5,6 +5,7 @@
 
 import SwiftUI
 import Combine
+import PencilKit
 
 // MARK: - App State
 final class AppState: ObservableObject {
@@ -53,6 +54,7 @@ final class AppState: ObservableObject {
     // UI State
     @Published var isAreaModeEnabled: Bool = false
     @Published var isAreaFromOrigin: Bool = false
+    @Published var showIntersectionHighlights: Bool = true
     @Published var isGeometryModeEnabled: Bool = false
     @Published var geometryElements: [GeometryElement] = []
     @Published var markedPoints: [MarkedPoint] = []
@@ -64,6 +66,8 @@ final class AppState: ObservableObject {
     @Published var isMotionModeActive: Bool = false
     @Published var isLocusModeActive: Bool = false
     @Published var locusPointA: CGPoint = CGPoint(x: 2.0, y: 0.0)
+    @Published var isDrawingMode: Bool = false
+    var canvasView = PKCanvasView()
     
     private var cancellables = Set<AnyCancellable>()
     private var pointLabelIndex: Int = 0
@@ -183,11 +187,14 @@ final class AppState: ObservableObject {
         line = Line()
         isAreaModeEnabled = false
         isAreaFromOrigin = false
+        showIntersectionHighlights = true
         isGeometryModeEnabled = false
         movingPointT = 0.0
         isMotionModeActive = false
         isLocusModeActive = false
         locusPointA = CGPoint(x: 2.0, y: 0.0)
+        isDrawingMode = false
+        canvasView.drawing = PKDrawing()
         clearMarkedPoints()
         resetZoomAndPan()
         showAdvancedParabola = false

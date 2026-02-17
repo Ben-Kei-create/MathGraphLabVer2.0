@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A54564672F43545B0018E76E /* MissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54564662F4354550018E76E /* MissionManager.swift */; };
 		A54564692F43546B0018E76E /* MissionOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54564682F43546B0018E76E /* MissionOverlayView.swift */; };
+		A545647F2F44B2130018E76E /* MathGraphLab.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A545647E2F44B2130018E76E /* MathGraphLab.storekit */; };
 		A5BEBAC32F3C655E009A42F6 /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BEBAC22F3C655E009A42F6 /* BannerAdView.swift */; };
 		A5BEBAC72F3C8AD5009A42F6 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A5BEBAC62F3C8AD5009A42F6 /* GoogleMobileAds */; };
 		A5BEBAD32F3C95E9009A42F6 /* EquationOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BEBAD22F3C95E4009A42F6 /* EquationOverlayView.swift */; };
@@ -63,6 +64,7 @@
 /* Begin PBXFileReference section */
 		A54564662F4354550018E76E /* MissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionManager.swift; sourceTree = "<group>"; };
 		A54564682F43546B0018E76E /* MissionOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionOverlayView.swift; sourceTree = "<group>"; };
+		A545647E2F44B2130018E76E /* MathGraphLab.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = MathGraphLab.storekit; sourceTree = "<group>"; };
 		A552F63E2F3C620D00309DF0 /* Untitled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Untitled.swift; sourceTree = "<group>"; };
 		A5BEBAC22F3C655E009A42F6 /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 		A5BEBAD22F3C95E4009A42F6 /* EquationOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquationOverlayView.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 		A5C079202F3BFAC9005E1164 = {
 			isa = PBXGroup;
 			children = (
+				A545647E2F44B2130018E76E /* MathGraphLab.storekit */,
 				A5C0792B2F3BFAC9005E1164 /* MathGraphLab2 */,
 				A5C0793B2F3BFACA005E1164 /* MathGraphLab2Tests */,
 				A5C079452F3BFACA005E1164 /* MathGraphLab2UITests */,
@@ -441,6 +444,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A545647F2F44B2130018E76E /* MathGraphLab.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

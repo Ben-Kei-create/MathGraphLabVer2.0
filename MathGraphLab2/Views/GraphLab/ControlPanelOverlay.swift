@@ -156,6 +156,27 @@ struct ControlPanelOverlay: View {
                                 .buttonStyle(.plain)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
+                                        appState.isGeometryModeEnabled.toggle()
+                                        if appState.isGeometryModeEnabled {
+                                            appState.isDrawingMode = false
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: appState.isGeometryModeEnabled ? "circle.fill" : "circle")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(appState.isGeometryModeEnabled ? .orange : .orange.opacity(0.6))
+                                        .frame(width: 28, height: 28)
+                                        .background(
+                                            Circle().fill(
+                                                appState.isGeometryModeEnabled
+                                                ? Color.orange.opacity(0.18)
+                                                : Color.orange.opacity(0.08)
+                                            )
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
                                         appState.isAreaFromOrigin.toggle()
                                     }
                                 } label: {
@@ -174,16 +195,22 @@ struct ControlPanelOverlay: View {
                                 .buttonStyle(.plain)
                                 .disabled(!appState.isAreaModeEnabled)
                                 .opacity(appState.isAreaModeEnabled ? 1.0 : 0.35)
-                                if appState.markedPoints.count >= 2 {
-                                    Button(action: applyLineFromLastTwoPoints) {
-                                        Image(systemName: "wand.and.stars")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.white)
-                                            .frame(width: 28, height: 28)
-                                            .background(Circle().fill(Color.blue))
-                                    }
-                                    .buttonStyle(.plain)
+                                Button(action: applyLineFromLastTwoPoints) {
+                                    Image(systemName: "line.diagonal")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(appState.markedPoints.count >= 2 ? .blue : .blue.opacity(0.5))
+                                        .frame(width: 28, height: 28)
+                                        .background(
+                                            Circle().fill(
+                                                appState.markedPoints.count >= 2
+                                                ? Color.blue.opacity(0.18)
+                                                : Color.blue.opacity(0.08)
+                                            )
+                                        )
                                 }
+                                .buttonStyle(.plain)
+                                .disabled(appState.markedPoints.count < 2)
+                                .opacity(appState.markedPoints.count < 2 ? 0.35 : 1.0)
                                 Spacer(minLength: 4)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -237,11 +264,21 @@ struct ControlPanelOverlay: View {
                                 .buttonStyle(.plain)
                                 // 接線スナップ
                                 Button(action: applyTangentSnap) {
-                                    Image(systemName: "line.diagonal")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.orange)
+                                    Text("∟")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(
+                                            appState.parabola.a == 0 || !appState.showParabolaGraph
+                                            ? .orange.opacity(0.5)
+                                            : .orange
+                                        )
                                         .frame(width: 28, height: 28)
-                                        .background(Circle().fill(Color.orange.opacity(0.15)))
+                                        .background(
+                                            Circle().fill(
+                                                appState.parabola.a == 0 || !appState.showParabolaGraph
+                                                ? Color.orange.opacity(0.08)
+                                                : Color.orange.opacity(0.15)
+                                            )
+                                        )
                                 }
                                 .buttonStyle(.plain)
                                 .disabled(appState.parabola.a == 0 || !appState.showParabolaGraph)
@@ -260,6 +297,44 @@ struct ControlPanelOverlay: View {
                                         .background(Circle().fill(appState.isAreaModeEnabled ? Color.green.opacity(0.18) : Color.green.opacity(0.08)))
                                 }
                                 .buttonStyle(.plain)
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        appState.showIntersectionHighlights.toggle()
+                                    }
+                                } label: {
+                                    Image(systemName: "circle.fill")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(appState.showIntersectionHighlights ? .green : .green.opacity(0.5))
+                                        .frame(width: 28, height: 28)
+                                        .background(
+                                            Circle().fill(
+                                                appState.showIntersectionHighlights
+                                                ? Color.green.opacity(0.18)
+                                                : Color.green.opacity(0.08)
+                                            )
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                                if appState.markedPoints.count >= 2 {
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            appState.showDistances.toggle()
+                                        }
+                                    } label: {
+                                        Image(systemName: "ruler")
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundColor(appState.showDistances ? .purple : .purple.opacity(0.55))
+                                            .frame(width: 28, height: 28)
+                                            .background(
+                                                Circle().fill(
+                                                    appState.showDistances
+                                                    ? Color.purple.opacity(0.18)
+                                                    : Color.purple.opacity(0.08)
+                                                )
+                                            )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                                 Spacer(minLength: 4)
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {

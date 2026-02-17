@@ -55,26 +55,28 @@ struct AnalysisOverlayView: View {
                 )
             }
 
-            // Draw droplines from intersections to X-axis
-            drawDroplines(
-                context: context,
-                coordSystem: coordSystem,
-                intersections: intersections
-            )
+            if appState.showIntersectionHighlights {
+                // Draw droplines from intersections to X-axis
+                drawDroplines(
+                    context: context,
+                    coordSystem: coordSystem,
+                    intersections: intersections
+                )
 
-            // Draw intersection points (green dots)
-            drawIntersectionPoints(
-                context: context,
-                coordSystem: coordSystem,
-                intersections: intersections
-            )
+                // Draw intersection points (green dots)
+                drawIntersectionPoints(
+                    context: context,
+                    coordSystem: coordSystem,
+                    intersections: intersections
+                )
 
-            // Draw smart labels (x, y) above each intersection
-            drawIntersectionLabels(
-                context: context,
-                coordSystem: coordSystem,
-                intersections: intersections
-            )
+                // Draw smart labels (x, y) above each intersection
+                drawIntersectionLabels(
+                    context: context,
+                    coordSystem: coordSystem,
+                    intersections: intersections
+                )
+            }
         }
     }
     
